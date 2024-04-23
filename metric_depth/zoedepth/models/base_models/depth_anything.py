@@ -171,7 +171,7 @@ class Resize(object):
 
     def __call__(self, x):
         width, height = self.get_size(*x.shape[-2:][::-1])
-        return nn.functional.interpolate(x, (height, width), mode='bilinear', align_corners=True)
+        return nn.functional.interpolate(x, (int(height), int(width)), mode='bilinear', align_corners=True)
 
 class PrepForMidas(object):
     def __init__(self, resize_mode="minimal", keep_aspect_ratio=True, img_size=384, do_resize=True):
@@ -338,7 +338,7 @@ class DepthAnythingCore(nn.Module):
         
         depth_anything = DPT_DINOv2(out_channels=[256, 512, 1024, 1024], use_clstoken=False)
         
-        state_dict = torch.load('./checkpoints/depth_anything_vitl14.pth', map_location='cpu')
+        state_dict = torch.load('./ckpts/depth_anything_vitl14.pth', map_location='cpu')
         depth_anything.load_state_dict(state_dict)
         
         kwargs.update({'keep_aspect_ratio': force_keep_ar})

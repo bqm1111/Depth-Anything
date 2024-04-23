@@ -51,9 +51,8 @@ if __name__ == '__main__':
         filenames = os.listdir(args.video_path)
         filenames = [os.path.join(args.video_path, filename) for filename in filenames if not filename.startswith('.')]
         filenames.sort()
-    
     os.makedirs(args.outdir, exist_ok=True)
-    
+
     for k, filename in enumerate(filenames):
         print('Progress {:}/{:},'.format(k+1, len(filenames)), 'Processing', filename)
         
@@ -75,10 +74,11 @@ if __name__ == '__main__':
             
             frame = transform({'image': frame})['image']
             frame = torch.from_numpy(frame).unsqueeze(0).to(DEVICE)
-            
+            import time
+            start = time.time()
             with torch.no_grad():
                 depth = depth_anything(frame)
-
+            print(f"Time = {time.time() - start}")
             depth = F.interpolate(depth[None], (frame_height, frame_width), mode='bilinear', align_corners=False)[0, 0]
             depth = (depth - depth.min()) / (depth.max() - depth.min()) * 255.0
             
